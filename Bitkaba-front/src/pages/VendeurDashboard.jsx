@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import axios from 'axios';
+import QRCode from 'react-qr-code';
 
 function VendeurDashboard() {
   const [result, setResult] = useState(null);
@@ -28,6 +29,14 @@ function VendeurDashboard() {
     } catch (err) {
       setError(err.response?.data?.error || err.message);
     }
+  };
+
+  // Génère l'URL pour le QR code (vers l'interface client avec le payment request)
+  const getQrValue = () => {
+    const paymentRequest = result?.invoice?.request || result?.invoice?.payment_request;
+    if (!paymentRequest) return '';
+    // Change le port si besoin pour pointer vers le front client
+    return `${window.location.origin.replace('vendeur', 'client')}?pr=${encodeURIComponent(paymentRequest)}`;
   };
 
   return (
@@ -110,12 +119,31 @@ function VendeurDashboard() {
               <div className="bg-red-100 text-red-700 rounded-lg px-4 py-3 mb-2 shadow">{error}</div>
             )}
             {result && !Array.isArray(result) && (
-              <div className="bg-green-100 text-green-800 rounded-lg px-4 py-3 shadow">
-                <div className="font-bold mb-1">Hold Invoice générée :</div>
-                <div className="break-all text-xs">
-                  <span className="font-semibold">Payment Request :</span> {result.invoice?.request || result.invoice?.payment_request}<br />
-                  <span className="font-semibold">ID :</span> {result.invoice?.id}<br />
-                  <span className="font-semibold">Secret :</span> {result.invoice?.secret}
+              <div className="bg-green-100 text-green-800 rounded-lg px-4 py-3 shadow flex flex-col md:flex-row gap-6 items-center">
+                <div>
+                  <div className="font-bold mb-1">Hold Invoice générée :</div>
+                  <div className="break-all text-xs mb-2">
+                    <span className="font-semibold">Payment Request :</span> {result.invoice?.request || result.invoice?.payment_request}<br />
+                    <span className="font-semibold">Montant :</span> {holdInvoiceData.amount} sats<br />
+                    <span className="font-semibold">ID :</span> {result.invoice?.id}<br />
+                    <span className="font-semibold">Secret (à imprimer et coller sur le colis) :</span>
+                    <div className="font-mono text-base bg-white text-green-700 rounded px-2 py-1 inline-block mt-1">{result.invoice?.secret}</div>
+                  </div>
+                </div>
+                <div className="flex flex-col items-center">
+                  {result.invoice?.request || result.invoice?.payment_request ? (
+                    <>
+                      <QRCode
+                        value={getQrValue()}
+                        size={140}
+                        bgColor="#fff"
+                        fgColor="#2575fc"
+                        level="H"
+                        includeMargin={true}
+                      />
+                      <div className="text-xs text-gray-700 mt-2 text-center">Scannez pour payer</div>
+                    </>
+                  ) : null}
                 </div>
               </div>
             )}
