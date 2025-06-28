@@ -1,120 +1,98 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
+import axios from 'axios';
 
-const mockOrders = [
-  {
-    id: 'CMD001',
-    item: 'Smartphone',
-    status: 'En attente de livraison',
-    codeSecret: 'ABC123',
-    paymentStatus: 'En attente',
-    orderDate: '2024-06-01',
-    deliveryAddress: '12 rue de Paris, 75001 Paris',
-    price: '499€',
-    carrier: 'DHL',
-  },
-  {
-    id: 'CMD002',
-    item: 'Casque audio',
-    status: 'Livré',
-    codeSecret: 'XYZ789',
-    paymentStatus: 'Payé',
-    orderDate: '2024-05-28',
-    deliveryAddress: '34 avenue Victor Hugo, 69006 Lyon',
-    price: '89€',
-    carrier: 'La Poste',
-  },
-];
+function ClientDashboard() {
+  const [paymentRequest, setPaymentRequest] = useState('');
+  const [settleData, setSettleData] = useState({ id: '', secret: '' });
+  const [result, setResult] = useState(null);
+  const [error, setError] = useState('');
 
-export default function ClientDashboard() {
-  const [orders, setOrders] = useState(mockOrders);
-  const [inputCode, setInputCode] = useState('');
-  const [selectedOrderId, setSelectedOrderId] = useState(null);
-  const [message, setMessage] = useState('');
-
-  const handleConfirmDelivery = (orderId) => {
-    const order = orders.find((o) => o.id === orderId);
-    if (!order) return;
-
-    if (inputCode === order.codeSecret) {
-      setOrders((prev) =>
-        prev.map((o) =>
-          o.id === orderId
-            ? { ...o, status: 'Livré', paymentStatus: 'Payé' }
-            : o
-        )
-      );
-      setMessage('Livraison confirmée et paiement débloqué !');
-    } else {
-      setMessage('Code secret incorrect, veuillez réessayer.');
+  // Payer une hold invoice (payment_request)
+  const payHoldInvoice = async () => {
+    setError('');
+    setResult(null);
+    try {
+      const res = await axios.post('http://localhost:3000/api/pay', { request: paymentRequest });
+      setResult(res.data);
+    } catch (err) {
+      setError(err.response?.data?.error || err.message);
     }
-    setInputCode('');
-    setSelectedOrderId(null);
+  };
+
+  // Saisir le code secret pour débloquer la hold invoice
+  const settleHoldInvoice = async () => {
+    setError('');
+    setResult(null);
+    try {
+      const res = await axios.post('http://localhost:3000/api/settleholdinvoice', settleData);
+      setResult(res.data);
+    } catch (err) {
+      setError(err.response?.data?.error || err.message);
+    }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-600 via-indigo-700 to-purple-800 text-white p-8">
-      <h2 className="text-4xl font-bold mb-8">Mes commandes</h2>
-      {orders.length === 0 && <p>Aucune commande pour le moment.</p>}
+    <div className="min-h-screen bg-gradient-to-br from-green-400 via-blue-500 to-purple-600 flex flex-col items-center py-12 px-4">
+      <div className="w-full max-w-xl bg-white bg-opacity-90 rounded-xl shadow-2xl p-8 space-y-8">
+        <h2 className="text-3xl font-bold text-blue-700 mb-6 text-center">Espace Client</h2>
 
-      <ul className="space-y-6">
-        {orders.map((order) => (
-          <li
-            key={order.id}
-            className="bg-white rounded-lg p-6 shadow-lg text-black"
+        {/* Payer une Hold Invoice */}
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-black">
+          <div className="mb-2 font-bold">Payer une Hold Invoice</div>
+          <input
+            className="border px-2 py-1 rounded mr-2 w-3/4"
+            type="text"
+            placeholder="Payment Request (lnbc...)"
+            value={paymentRequest}
+            onChange={e => setPaymentRequest(e.target.value)}
+          />
+          <button
+            className="bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded text-white"
+            onClick={payHoldInvoice}
           >
-            <div className="flex justify-between items-center mb-3">
-              <h3 className="text-xl font-semibold">{order.item}</h3>
-              <span
-                className={`px-3 py-1 rounded-full text-sm font-semibold ${
-                  order.status === 'Livré'
-                    ? 'bg-green-600 text-green-100'
-                    : 'bg-yellow-500 text-yellow-100'
-                }`}
-              >
-                {order.status}
-              </span>
-            </div>
-            <p>Commande ID: {order.id}</p>
-            <p>Date de commande: {order.orderDate}</p>
-            <p>Adresse de livraison: {order.deliveryAddress}</p>
-            <p>Transporteur: {order.carrier}</p>
-            <p>Prix: {order.price}</p>
-            <p>Statut paiement: {order.paymentStatus}</p>
+            Payer
+          </button>
+        </div>
 
-            {order.status !== 'Livré' && (
-              <>
-                {selectedOrderId === order.id ? (
-                  <div className="mt-4">
-                    <input
-                      type="text"
-                      placeholder="Entrez le code secret"
-                      value={inputCode}
-                      onChange={(e) => setInputCode(e.target.value)}
-                      className="px-3 py-2 rounded text-black"
-                    />
-                    <button
-                      onClick={() => handleConfirmDelivery(order.id)}
-                      className="ml-3 bg-green-500 hover:bg-green-600 px-4 py-2 rounded text-white font-semibold"
-                    >
-                      Confirmer la livraison
-                    </button>
-                  </div>
-                ) : (
-                  <button
-                    onClick={() => setSelectedOrderId(order.id)}
-                    className="mt-4 bg-indigo-600 hover:bg-indigo-700 px-5 py-2 rounded font-semibold"
-                  >
-                    Confirmer réception
-                  </button>
-                )}
-              </>
-            )}
-          </li>
-        ))}
-      </ul>
-      {message && (
-        <p className="mt-8 text-center text-lg font-semibold">{message}</p>
-      )}
+        {/* Débloquer la Hold Invoice avec le code secret */}
+        <div className="bg-green-50 border border-green-200 rounded-lg p-4 text-black">
+          <div className="mb-2 font-bold">Débloquer la Hold Invoice (code secret reçu à la livraison)</div>
+          <input
+            className="border px-2 py-1 rounded mr-2"
+            type="text"
+            placeholder="ID de la facture"
+            value={settleData.id}
+            onChange={e => setSettleData({ ...settleData, id: e.target.value })}
+          />
+          <input
+            className="border px-2 py-1 rounded mr-2"
+            type="text"
+            placeholder="Code secret"
+            value={settleData.secret}
+            onChange={e => setSettleData({ ...settleData, secret: e.target.value })}
+          />
+          <button
+            className="bg-green-600 hover:bg-green-700 px-3 py-1 rounded text-white"
+            onClick={settleHoldInvoice}
+          >
+            Valider le code
+          </button>
+        </div>
+
+        {/* Résultat ou erreur */}
+        {error && <div className="bg-red-100 text-red-700 rounded p-4">{error}</div>}
+        {result && (
+          <pre className="bg-gray-900 text-green-200 rounded p-4 overflow-x-auto text-xs mt-4">
+            {JSON.stringify(result, null, 2)}
+          </pre>
+        )}
+
+        <div className="text-center text-gray-400 text-xs mt-8">
+          &copy; {new Date().getFullYear()} BitKaba. Tous droits réservés.
+        </div>
+      </div>
     </div>
   );
 }
+
+export default ClientDashboard;
