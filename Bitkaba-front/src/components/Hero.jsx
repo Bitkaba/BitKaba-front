@@ -1,4 +1,6 @@
+import React from 'react';
 export default function Hero() {
+  
   return (
     <div className="max-w-3xl mx-auto text-center">
       <h1 className="text-5xl font-extrabold tracking-tight sm:text-7xl">

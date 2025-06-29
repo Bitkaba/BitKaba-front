@@ -1,3 +1,4 @@
+import React from 'react';
 export default function Security() {
   return (
     <section id="security" className="mt-32 max-w-4xl mx-auto text-center">

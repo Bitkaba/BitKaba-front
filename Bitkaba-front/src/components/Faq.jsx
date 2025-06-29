@@ -1,3 +1,4 @@
+import React from 'react';
 export default function Faq() {
   return (
     <section id="faq" className="mt-32 max-w-4xl mx-auto">

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import axios from 'axios';
 import QRCode from 'react-qr-code';
+import React from 'react';
 
 function VendeurDashboard() {
   const [result, setResult] = useState(null);

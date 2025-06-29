@@ -1,3 +1,4 @@
+import React from 'react';
 export default function Features() {
   return (
     <section id="features" className="mt-32 max-w-4xl mx-auto">

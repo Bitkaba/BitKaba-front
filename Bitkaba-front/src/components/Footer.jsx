@@ -1,4 +1,6 @@
+import React from 'react';
 export default function Footer() {
+
   return (
     <footer id="contact" className="mt-32 text-center text-fuchsia-200 pb-12">
       <h2 className="text-2xl font-semibold">Contact</h2>
