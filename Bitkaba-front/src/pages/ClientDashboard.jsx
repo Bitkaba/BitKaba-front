@@ -33,22 +33,21 @@ function ClientDashboard() {
   return (
     <div className="min-h-screen flex bg-gray-50">
       {/* Sidebar */}
-      <aside className="w-60 bg-indigo-800 text-white flex flex-col py-8 px-4">
+      <aside className="w-60 bg-green-800 text-white flex flex-col py-8 px-4">
         <div className="flex items-center gap-3 mb-10">
           <div className="bg-white rounded-full p-2">
             <svg width="32" height="32" fill="none" viewBox="0 0 24 24">
-              <circle cx="12" cy="12" r="12" fill="#6366f1" />
+              <circle cx="12" cy="12" r="12" fill="#22c55e" />
               <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" fill="#fff"/>
             </svg>
           </div>
           <span className="font-bold text-lg">BitKaba</span>
         </div>
         <nav className="flex flex-col gap-4">
-          <span className="font-semibold text-indigo-100">Espace Client</span>
-          <span className="text-indigo-200">Paiement</span>
-          <span className="text-indigo-200">Déblocage</span>
+          <span className="text-green-200">Paiement</span>
+          <span className="text-green-200">Déblocage</span>
         </nav>
-        <div className="mt-auto text-xs text-indigo-200 pt-8">&copy; {new Date().getFullYear()} BitKaba</div>
+        <div className="mt-auto text-xs text-green-200 pt-8">&copy; {new Date().getFullYear()} BitKaba</div>
       </aside>
 
       {/* Main content */}
@@ -56,27 +55,29 @@ function ClientDashboard() {
         {/* Header */}
         <header className="bg-white shadow px-8 py-4 flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-indigo-800">Espace Client</h1>
-            <p className="text-sm text-indigo-400">Payez et débloquez vos commandes Lightning</p>
+            <h1 className="text-2xl font-bold text-green-800">Espace Client</h1>
+            <p className="text-sm text-green-500">Payez et débloquez vos commandes Lightning</p>
           </div>
-          <img src="https://cdn-icons-png.flaticon.com/512/3135/3135768.png" alt="Client" className="w-10 h-10 rounded-full border-2 border-indigo-200" />
+          <img src="https://cdn-icons-png.flaticon.com/512/3135/3135768.png" alt="Client" className="w-10 h-10 rounded-full border-2 border-green-200" />
         </header>
 
         {/* Content */}
         <main className="flex-1 p-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
             {/* Payer une Hold Invoice */}
-            <section className="bg-white rounded-lg shadow p-6 flex flex-col gap-4 border border-indigo-100">
-              <h2 className="text-lg font-bold text-indigo-700 mb-2">Payer une Hold Invoice</h2>
+            <section className="bg-white rounded-lg shadow p-6 flex flex-col gap-4 border border-green-100">
+              <h2 className="text-lg font-bold text-green-700 mb-2">Payer une Hold Invoice</h2>
               {/* Données fictives produit */}
-              <div className="bg-indigo-50 border border-indigo-200 rounded p-4 mb-2">
-                <div className="font-semibold text-indigo-800 mb-1">Produit : Casque Bluetooth</div>
-                <div className="text-sm text-indigo-700">Description : Casque sans fil, autonomie 20h, réduction de bruit.</div>
-                <div className="text-sm text-indigo-700">Montant : <span className="font-bold">1000 sats</span></div>
+              <div className="bg-green-50 border border-green-200 rounded p-4 mb-2">
+                <div className="font-semibold text-green-800 mb-1">Produit : Casque Bluetooth</div>
+                <div className="text-sm text-green-700">Description : Casque sans fil, autonomie 20h, réduction de bruit.</div>
+                <div className="text-sm text-green-700">Montant : <span className="font-bold">1000 sats</span></div>
               </div>
               {/* Champ Payment Request pré-rempli (fictif) */}
               <input
-                
+                className="border border-green-200 px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-green-400 transition w-full"
+                type="text"
+                placeholder="Collez la Payment Request ici"
                 value={paymentRequest}
                 onChange={e => setPaymentRequest(e.target.value)}
                 // Valeur fictive si vide
@@ -87,7 +88,7 @@ function ClientDashboard() {
                 }}
               />
               <button
-                className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 rounded shadow transition"
+                className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 rounded shadow transition"
                 onClick={payHoldInvoice}
               >
                 Payer
